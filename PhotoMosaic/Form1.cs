@@ -10,6 +10,10 @@ using System.Windows.Forms;
 
 namespace PhotoMosaic {
     public partial class Form1 : Form {
+        Graphics Canvas;
+        int CellsValue;
+        string sourceImage;
+
         public Form1()
         {
             InitializeComponent();
@@ -21,9 +25,38 @@ namespace PhotoMosaic {
         }
 
         private void Form1_Load(object sender, EventArgs e)
+        {   
+            CellsValue = (int)numericUpDownCells.Value;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
         {
-            Graphics Canvas = panel1.CreateGraphics();
-            Image img = new Image(Canvas);
+            CellsValue = (int)numericUpDownCells.Value;
+
+            SourceImage img = new SourceImage(pictureBox1, CellsValue, sourceImage);
+            img.CalculateAVGCellColors();
+            
+            img.DrawAvgColors();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = @"C:\Users\nick.muldrew\Downloads\",
+                Title = "Browse Pictures",
+                CheckFileExists = true,
+                CheckPathExists = true,
+                RestoreDirectory = true,
+
+                Filter = "Images (*.BMP;*.JPG;*.GIF,*.PNG,*.TIFF)|*.BMP;*.JPG;*.GIF;*.PNG;*.TIFF|" +
+                "All files (*.*)|*.*"
+        };
+
+            if(openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                sourceImage = openFileDialog1.FileName;
+            }
         }
     }
 }
