@@ -33,10 +33,13 @@ namespace PhotoMosaic {
         {
             CellsValue = (int)numericUpDownCells.Value;
 
-            SourceImage img = new SourceImage(pictureBox1, CellsValue, sourceImage);
-            img.CalculateAVGCellColors();
-            
-            img.DrawAvgColors();
+            //SourceImage img = new SourceImage(pictureBox1, CellsValue, sourceImage);
+            //img.CalculateAVGCellColors();            
+            //img.DrawAvgColors();
+
+            ImageEditor ImgEdit = new ImageEditor(pictureBox1);
+            ImgEdit.ImportImage(sourceImage);
+            //ImgEdit.Draw();
         }
 
         private void button2_Click(object sender, EventArgs e)
