@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace PhotoMosaic {
     class ImageEditor {
         PictureBox pictureBox;
         Bitmap importedImage;
+        string filepath;
 
         public ImageEditor(PictureBox pictureBox)
         {
@@ -20,32 +22,14 @@ namespace PhotoMosaic {
 
         public void ImportImage(string filepath)
         {
+            this.filepath = filepath;
+            Console.WriteLine(filepath);
             importedImage = new Bitmap(filepath);
-            Draw();
         }
 
-        private Bitmap ResizeImage(Bitmap image, int width, int height)
+        public void ImportImage_CropAndResize_Save(string filepath)
         {
-            Rectangle rect = new Rectangle(0, 0, width, height);
-            Bitmap returnImage = new Bitmap(width, height);
-
-            returnImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using (var graphics = Graphics.FromImage(returnImage))
-            {
-                graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-                graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, rect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
-            return returnImage;
+            ImportImage(filepath);
         }
 
         public void Crop()
@@ -55,8 +39,31 @@ namespace PhotoMosaic {
 
         public void SaveImage()
         {
+            string path = @"..\..\..\Images\Test";
 
+            string imageName = Path.GetFileName(filepath);
+
+            Console.WriteLine(imageName);                        
+
+            try
+            {
+                if (Directory.Exists(path))
+                {
+                    Console.WriteLine("The Path already exists.");
+                    importedImage.Save(path + @"\" + imageName);
+                }
+                DirectoryInfo di = Directory.CreateDirectory(path);
+                Console.WriteLine("The Directory was created successfully at {0}.", Directory.GetCreationTime(path));
+                importedImage.Save(path + @"\" + imageName);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
+            //importedImage.Save(filepath);
         }
+
+
 
         public void Draw()
         {
@@ -64,7 +71,7 @@ namespace PhotoMosaic {
             pictureBox.Image = ResizeImageKeepAspectRatio(importedImage, 800, 800);
         }
 
-        private System.Drawing.Bitmap ResizeImageKeepAspectRatio(System.Drawing.Bitmap image, int width, int height)
+        private Bitmap ResizeImageKeepAspectRatio(Bitmap image, int width, int height)
         {
             Bitmap result = null;
 
@@ -122,13 +129,13 @@ namespace PhotoMosaic {
                             g.DrawImage(image, -shiftX, -shiftY, newWidth, newHeight);
 
                         }
-                        result = (System.Drawing.Bitmap)target.Clone();
+                        result = (Bitmap)target.Clone();
                     }
                 }
                 else
                 {
                     //Image size matched the given size
-                    result = (System.Drawing.Bitmap)image.Clone();
+                    result = (Bitmap)image.Clone();
                 }
             }
             catch (Exception)

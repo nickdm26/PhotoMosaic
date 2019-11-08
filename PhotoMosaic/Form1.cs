@@ -39,6 +39,7 @@ namespace PhotoMosaic {
 
             ImageEditor ImgEdit = new ImageEditor(pictureBox1);
             ImgEdit.ImportImage(sourceImage);
+            ImgEdit.SaveImage();
             //ImgEdit.Draw();
         }
 
