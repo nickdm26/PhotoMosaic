@@ -12,7 +12,9 @@ namespace PhotoMosaic {
     class ImageEditor {
         PictureBox pictureBox;
         Bitmap importedImage;
+        Bitmap editedImage;
         string filepath;
+        public string saveFileName;
 
         public ImageEditor(PictureBox pictureBox)
         {
@@ -30,6 +32,8 @@ namespace PhotoMosaic {
         public void ImportImage_CropAndResize_Save(string filepath)
         {
             ImportImage(filepath);
+            Bitmap editedImage = ResizeImageKeepAspectRatio(importedImage, 800, 800);
+            SaveImage(editedImage);
         }
 
         public void Crop()
@@ -37,24 +41,27 @@ namespace PhotoMosaic {
 
         }
 
-        public void SaveImage()
+        public void SaveImage(Bitmap bitmap)
         {
             string path = @"..\..\..\Images\Test";
 
-            string imageName = Path.GetFileName(filepath);
+            string imageName = Path.GetFileNameWithoutExtension(filepath);
 
-            Console.WriteLine(imageName);                        
+            saveFileName = path + @"\" + imageName + ".png";
+
+            Console.WriteLine(Path.GetFileNameWithoutExtension(filepath));
+            
 
             try
             {
                 if (Directory.Exists(path))
                 {
                     Console.WriteLine("The Path already exists.");
-                    importedImage.Save(path + @"\" + imageName);
+                    bitmap.Save(saveFileName);
                 }
                 DirectoryInfo di = Directory.CreateDirectory(path);
                 Console.WriteLine("The Directory was created successfully at {0}.", Directory.GetCreationTime(path));
-                importedImage.Save(path + @"\" + imageName);
+                bitmap.Save(saveFileName);
             }
             catch(Exception e)
             {

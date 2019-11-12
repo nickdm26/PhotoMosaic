@@ -29,6 +29,16 @@ namespace PhotoMosaic {
             CellPixels = Width / Cells;
         }
 
+        public Image(string filename, int Cells)
+        {
+            ImageURI = filename;
+            bitmap = new Bitmap(ImageURI);
+            Width = bitmap.Width;
+            Height = bitmap.Height;
+            this.Cells = Cells;
+            CellPixels = Width / Cells;
+        }
+
         public Color CalculateAverageColor()
         {          
             return CalculateSection(0, 0, Width, Height); ;

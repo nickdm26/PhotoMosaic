@@ -47,14 +47,14 @@ namespace PhotoMosaic {
 
             for (int w = 0; w < Cells; w++)
             {
-                wid += 4;
+                wid += 8;
                 hei = 0;
                 for (int h = 0; h < Cells; h++)
                 {                    
                     brush = new SolidBrush(AVGColors[w, h]);
-                    Canvas.FillRectangle(brush, w, h, 1, 1);
+                    Canvas.FillRectangle(brush, wid, hei, 8, 8);
                     //Console.WriteLine(wid + " " + hei);
-                    hei += 4;
+                    hei += 8;
                 }                
             }
             pictureBox.Image = tempBitmap;

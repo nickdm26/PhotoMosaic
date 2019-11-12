@@ -37,10 +37,12 @@ namespace PhotoMosaic {
             //img.CalculateAVGCellColors();            
             //img.DrawAvgColors();
 
-            ImageEditor ImgEdit = new ImageEditor(pictureBox1);
-            ImgEdit.ImportImage(sourceImage);
-            ImgEdit.SaveImage();
-            //ImgEdit.Draw();
+            //ImageEditor ImgEdit = new ImageEditor(pictureBox1);
+            //ImgEdit.ImportImage_CropAndResize_Save(sourceImage);
+            //Image nwImage = new Image(pictureBox1, CellsValue, ImgEdit.saveFileName);
+
+            ImageController imgController = new ImageController();
+            imgController.ImportSourceImages("dsad");
         }
 
         private void button2_Click(object sender, EventArgs e)
