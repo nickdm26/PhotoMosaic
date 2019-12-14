@@ -32,7 +32,7 @@ namespace PhotoMosaic {
 
             //string[] array1 = Directory.GetFiles(@"C:\Users\nick.muldrew\Documents\GitHub\PhotoMosaic\Images");
 
-            foreach(string s in Directory.EnumerateFiles(@"C:\Users\nick.muldrew\Documents\GitHub\PhotoMosaic\Images", "*.*", SearchOption.AllDirectories))
+            foreach(string s in Directory.EnumerateFiles(@"..\..\..\Images\", "*.*", SearchOption.AllDirectories))
             {
                 Console.WriteLine("In Directory: " + s);
             }
