@@ -33,18 +33,20 @@ namespace PhotoMosaic {
         {
             CellsValue = (int)numericUpDownCells.Value;
 
-            //SourceImage img = new SourceImage(pictureBox1, CellsValue, sourceImage);
+            //SourceImage img = new SourceImage(pictureBox1, CellsValue, sourceImage);        //calculates the average cell colours then draws it.
             //img.CalculateAVGCellColors();            
             //img.DrawAvgColors();
 
-            //ImageEditor ImgEdit = new ImageEditor(pictureBox1);
-            //ImgEdit.ImportImage_CropAndResize_Save(sourceImage);
-            //Image nwImage = new Image(pictureBox1, CellsValue, ImgEdit.saveFileName);
+            ImageEditor ImgEdit = new ImageEditor(pictureBox1);
+            ImgEdit.ImportImage_CropAndResize_Save(sourceImage);
+            Image nwImage = new Image(pictureBox1, CellsValue, ImgEdit.saveFileName);
 
-            ImageController imgController = new ImageController();
-            imgController.ImportSourceImages("dsad");
+            //ImageController imgController = new ImageController();
+            //imgController.ImportSourceImages("test_does_nothing");
         }
 
+        /*Browse Button
+         */
         private void button2_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog

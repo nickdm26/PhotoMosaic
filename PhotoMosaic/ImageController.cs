@@ -24,22 +24,20 @@ namespace PhotoMosaic {
             return result;
         }
 
+        /*
+         * ImportSourceImages is used to create an array holding all of the images imported from the folder.
+         */
         public void ImportSourceImages(string folderPath)
         {
             folderPath = sourceFolderFilePath;
             ArrayList imagesArray = new ArrayList();
-
-
+            
             //string[] array1 = Directory.GetFiles(@"C:\Users\nick.muldrew\Documents\GitHub\PhotoMosaic\Images");
 
             foreach(string s in Directory.EnumerateFiles(@"..\..\..\Images\", "*.*", SearchOption.AllDirectories))
             {
                 Console.WriteLine("In Directory: " + s);
             }
-
-
         }
-
-
     }
 }

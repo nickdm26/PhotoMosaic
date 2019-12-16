@@ -29,6 +29,10 @@ namespace PhotoMosaic {
             importedImage = new Bitmap(filepath);
         }
 
+        /*
+         * Imports the image then Crops it using the ResizeImageKeepAspectRatio method.
+         * Calls the SaveImage Method to save the new Image.
+         */
         public void ImportImage_CropAndResize_Save(string filepath)
         {
             ImportImage(filepath);
@@ -41,35 +45,38 @@ namespace PhotoMosaic {
 
         }
 
+        /*
+         * SaveImage is used to save the Bitmap as a .png to the Images\Test folder.
+         * If the Folder exists it will save it in there if not it will create the new folder.
+         */
         public void SaveImage(Bitmap bitmap)
         {
             string path = @"..\..\..\Images\Test";
-
-            string imageName = Path.GetFileNameWithoutExtension(filepath);
+            string imageName = Path.GetFileNameWithoutExtension(filepath);      //Get the name of the file without the filename extension.
 
             saveFileName = path + @"\" + imageName + ".png";
 
-            Console.WriteLine(Path.GetFileNameWithoutExtension(filepath));
-            
+            Console.WriteLine(Path.GetFileNameWithoutExtension(filepath));            
 
             try
             {
-                if (Directory.Exists(path))
+                if (Directory.Exists(path))                                 //Check if folder already exists if so save it there.
                 {
                     Console.WriteLine("The Path already exists.");
                     bitmap.Save(saveFileName);
                 }
-                DirectoryInfo di = Directory.CreateDirectory(path);
-                Console.WriteLine("The Directory was created successfully at {0}.", Directory.GetCreationTime(path));
-                bitmap.Save(saveFileName);
+                else
+                {                                                          //If folder does not exist save create a new directory to save the image to.                             
+                    DirectoryInfo di = Directory.CreateDirectory(path);
+                    Console.WriteLine("The Directory was created successfully at {0}.", Directory.GetCreationTime(path));
+                    bitmap.Save(saveFileName);
+                }                
             }
-            catch(Exception e)
+            catch(Exception e)                                             //Writes an error to console if error occured saving image.
             {
-                Console.WriteLine("The process failed: {0}", e.ToString());
+                Console.WriteLine("ERROR: The folder to save to could not be created/found: {0}", e.ToString());
             }
-            //importedImage.Save(filepath);
         }
-
 
 
         public void Draw()
@@ -78,6 +85,10 @@ namespace PhotoMosaic {
             pictureBox.Image = ResizeImageKeepAspectRatio(importedImage, 800, 800);
         }
 
+        /*
+         * ResizeImageKeepAspectRatio is used to Resize the Bitmap while keeping the aspect ratio
+         * width & Height are the desired dimensions that you want the bitmap to be returned as.
+         */
         private Bitmap ResizeImageKeepAspectRatio(Bitmap image, int width, int height)
         {
             Bitmap result = null;
