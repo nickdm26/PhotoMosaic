@@ -12,9 +12,33 @@ namespace PhotoMosaic {
         string sourceFolderFilePath;
         string inputImage;
 
+
         public ImageController()
         {
 
+        }
+
+        public void GenerateMosaic(string InputImage, string SourceImagesDirectory)
+        {
+            ProcessSourceImages(SourceImagesDirectory);
+        }
+
+        public void SaveMosiac(Bitmap mosaicBitmap, string SaveLocation)
+        {
+
+        }
+
+        private List<Image> ProcessSourceImages(string SourceImagesDirectory)
+        {
+            Console.WriteLine(SourceImagesDirectory);
+
+            List<Image> sourceImages = new List<Image>();
+            foreach (string s in Directory.EnumerateFiles(@SourceImagesDirectory, "*.*", SearchOption.AllDirectories))
+            {
+                Console.WriteLine("In Directory: " + s);
+            }
+
+            return sourceImages;
         }
 
         public Bitmap CreateOutPutBitmap()
