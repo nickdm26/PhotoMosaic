@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace PhotoMosaic {
     class SourceImage : Image{
-        Color[,] AVGColors;       //Color array with average colours.
+        public Color[,] AVGColors;       //Color array with average colours.
         Pen pen = new Pen(Color.Black);
         
         public SourceImage(PictureBox pictureBox, int Cells, string filename) : base(pictureBox, Cells, filename)

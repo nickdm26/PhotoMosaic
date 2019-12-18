@@ -9,38 +9,38 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PhotoMosaic {
-    class ImageEditor {
-        PictureBox pictureBox;
-        Bitmap importedImage;
-        Bitmap editedImage;
-        string filepath;
-        public string saveFileName;
+    static class ImageEditor {
+        //PictureBox pictureBox;
+        //Bitmap importedImage;
+        //Bitmap editedImage;
+        //string filepath;
 
-        public ImageEditor(PictureBox pictureBox)
-        {
-            this.pictureBox = pictureBox;
-            importedImage = new Bitmap(800, 800);
-        }
+        //public ImageEditor(PictureBox pictureBox)
+        //{
+        //    this.pictureBox = pictureBox;
+        //    importedImage = new Bitmap(800, 800);
+        //}
 
-        public void ImportImage(string filepath)
-        {
-            this.filepath = filepath;
-            Console.WriteLine(filepath);
-            importedImage = new Bitmap(filepath);
-        }
+        //public void ImportImage(string filepath)
+        //{
+        //    this.filepath = filepath;
+        //    Console.WriteLine(filepath);
+        //    importedImage = new Bitmap(filepath);
+        //}
 
         /*
          * Imports the image then Crops it using the ResizeImageKeepAspectRatio method.
          * Calls the SaveImage Method to save the new Image.
          */
-        public void ImportImage_CropAndResize_Save(string filepath)
+        public static void ImportImage_CropAndResize_Save(string filepath)
         {
-            ImportImage(filepath);
+            //ImportImage(filepath);
+            Bitmap importedImage = new Bitmap(filepath);
             Bitmap editedImage = ResizeImageKeepAspectRatio(importedImage, 800, 800);
-            SaveImage(editedImage);
+            SaveImage(editedImage, filepath);
         }
 
-        public void Crop()
+        public static void Crop()
         {
 
         }
@@ -49,14 +49,14 @@ namespace PhotoMosaic {
          * SaveImage is used to save the Bitmap as a .png to the Images\Test folder.
          * If the Folder exists it will save it in there if not it will create the new folder.
          */
-        public void SaveImage(Bitmap bitmap)
+        public static void SaveImage(Bitmap bitmap, string givenfilepath)
         {
             string path = @"..\..\..\Images\Test";
-            string imageName = Path.GetFileNameWithoutExtension(filepath);      //Get the name of the file without the filename extension.
+            string imageName = Path.GetFileNameWithoutExtension(givenfilepath);      //Get the name of the file without the filename extension.
 
-            saveFileName = path + @"\" + imageName + ".png";
+            string saveFileName = path + @"\" + imageName + ".png";
 
-            Console.WriteLine(Path.GetFileNameWithoutExtension(filepath));            
+            Console.WriteLine(Path.GetFileNameWithoutExtension(givenfilepath));            
 
             try
             {
@@ -79,17 +79,17 @@ namespace PhotoMosaic {
         }
 
 
-        public void Draw()
-        {
-            //pictureBox.Image = ResizeImage(importedImage, 800, 800);
-            pictureBox.Image = ResizeImageKeepAspectRatio(importedImage, 800, 800);
-        }
+        //public void Draw()
+        //{
+        //    //pictureBox.Image = ResizeImage(importedImage, 800, 800);
+        //    pictureBox.Image = ResizeImageKeepAspectRatio(importedImage, 800, 800);
+        //}
 
         /*
          * ResizeImageKeepAspectRatio is used to Resize the Bitmap while keeping the aspect ratio
          * width & Height are the desired dimensions that you want the bitmap to be returned as.
          */
-        private Bitmap ResizeImageKeepAspectRatio(Bitmap image, int width, int height)
+        public static Bitmap ResizeImageKeepAspectRatio(Bitmap image, int width, int height)
         {
             Bitmap result = null;
 
@@ -160,6 +160,7 @@ namespace PhotoMosaic {
             {
                 result = null;
             }
+            
             return result;
         }
     }

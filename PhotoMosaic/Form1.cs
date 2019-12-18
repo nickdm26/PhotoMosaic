@@ -43,7 +43,7 @@ namespace PhotoMosaic {
             //ImgEdit.ImportImage_CropAndResize_Save(sourceImage);
             //Image nwImage = new Image(pictureBox1, CellsValue, ImgEdit.saveFileName);
 
-            ImageController imgController = new ImageController();
+            ImageController imgController = new ImageController(pictureBox1);
             imgController.GenerateMosaic(InputImage, SourceImagesFolder);   
         }
 
@@ -95,6 +95,12 @@ namespace PhotoMosaic {
                 Console.WriteLine(openFileDialog2.FileName);
                 Console.WriteLine(dir.Substring(0, dir.LastIndexOf('\\')));
             }
+        }
+
+        private void Button4_Click(object sender, EventArgs e)
+        {
+            ImageController imgController = new ImageController(pictureBox1);
+            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images");
         }
     }
 }

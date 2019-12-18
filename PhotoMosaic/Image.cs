@@ -11,8 +11,9 @@ namespace PhotoMosaic {
         protected string ImageURI;
         public Bitmap bitmap;
         protected PictureBox pictureBox;
-        protected Color AvgColor;
+        public Color AvgColor;
         protected int AvgBrightness;
+        public Double Colordiffrence;
         public int Width;
         public int Height;
         public int Cells = 64;
@@ -42,6 +43,11 @@ namespace PhotoMosaic {
         public Color CalculateAverageColor()
         {          
             return CalculateSection(0, 0, Width, Height); ;
+        }
+
+        public void SetAverageColor()
+        {
+            AvgColor = CalculateAverageColor();
         }
 
         public int CalculateAverageBrightness()
@@ -97,6 +103,7 @@ namespace PhotoMosaic {
 
             return Math.Sqrt(R + G + B);            
         }
+
 
         public void Draw()
         {
