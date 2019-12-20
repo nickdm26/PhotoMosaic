@@ -9,6 +9,7 @@ using System.Windows.Forms;
 namespace PhotoMosaic {
     class SourceImage : Image{
         public Color[,] AVGColors;       //Color array with average colours.
+        public Image[,] mosaicImages;
         Pen pen = new Pen(Color.Black);
         
         public SourceImage(PictureBox pictureBox, int Cells, string filename) : base(pictureBox, Cells, filename)
@@ -23,6 +24,7 @@ namespace PhotoMosaic {
             CellPixels = Width / Cells;
 
             AVGColors = new Color[Cells, Cells];
+            mosaicImages = new Image[Cells, Cells];
         }
 
         public void CalculateAVGCellColors()

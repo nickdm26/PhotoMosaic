@@ -44,7 +44,7 @@ namespace PhotoMosaic {
             //Image nwImage = new Image(pictureBox1, CellsValue, ImgEdit.saveFileName);
 
             ImageController imgController = new ImageController(pictureBox1);
-            imgController.GenerateMosaic(InputImage, SourceImagesFolder);   
+            imgController.GenerateMosaic(InputImage, SourceImagesFolder);
         }
 
         /*
