@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace PhotoMosaic {
     class Image {
-        protected string ImageURI;
+        public string ImageURI;
         public Bitmap bitmap;
         protected PictureBox pictureBox;
         public Color AvgColor;
@@ -40,6 +40,16 @@ namespace PhotoMosaic {
             CellPixels = Width / Cells;
         }
 
+        public void ImportImage()
+        {
+            bitmap = new Bitmap(ImageURI);
+        }
+
+        public void ClearImageBitmap()
+        {
+            bitmap.Dispose();
+        }
+
         public Color CalculateAverageColor()
         {          
             return CalculateSection(0, 0, Width, Height); ;
@@ -48,6 +58,7 @@ namespace PhotoMosaic {
         public void SetAverageColor()
         {
             AvgColor = CalculateAverageColor();
+            ClearImageBitmap();
         }
 
         public int CalculateAverageBrightness()
@@ -88,6 +99,7 @@ namespace PhotoMosaic {
             b = b / pixelCounter;
 
             sectionAvgColor = Color.FromArgb(r, g, b);
+            
             return sectionAvgColor;
         }
 

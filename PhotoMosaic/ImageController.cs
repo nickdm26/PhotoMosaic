@@ -15,7 +15,7 @@ namespace PhotoMosaic {
         PictureBox pictureBox;
         Image[,] mosaicImages;
         Color[,] AVGColors;
-        int Cells = 32;
+        int Cells = 64;
 
 
 
@@ -27,9 +27,15 @@ namespace PhotoMosaic {
         public void GenerateMosaic(string InputImageFileName, string SourceImagesDirectory)
         {
             var stopwatch = new System.Diagnostics.Stopwatch();
+            
+            var stopwatchFindClosestImage = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
+            
 
-            List<Image> SourceImages = ProcessSourceImages(SourceImagesDirectory);
+            //List<Image> SourceImages = ProcessSourceImages(SourceImagesDirectory);
+            List<Image> SourceImages = ProcessSourceImagesInParrallel(SourceImagesDirectory);
+
+
             inputImage = new SourceImage(pictureBox, Cells, InputImageFileName);
             inputImage.bitmap = ImageEditor.ResizeImageKeepAspectRatio(inputImage.bitmap, 800, 800);
             inputImage.CalculateAVGCellColors();
@@ -37,6 +43,9 @@ namespace PhotoMosaic {
 
             AVGColors = inputImage.AVGColors;
             mosaicImages = inputImage.mosaicImages;
+            ClearMemory();
+
+            stopwatchFindClosestImage.Start();
 
             for(int h = 0; h < Cells; h++)
             {
@@ -46,12 +55,24 @@ namespace PhotoMosaic {
                 }
             }
             //FindClosestImageAvgColor(SourceImages, inputImage.AvgColor);
-            inputImage.mosaicImages = mosaicImages;     //need to change how this part interacts with SourceImage class.
+            //inputImage.mosaicImages = mosaicImages;     //need to change how this part interacts with SourceImage class.
+            stopwatchFindClosestImage.Stop();
 
             Draw(CreateOutPutBitmap());
 
             stopwatch.Stop();
-            Console.WriteLine("Execution Time: " + stopwatch.ElapsedMilliseconds /1000 + " seconds");
+            Console.WriteLine("Total Execution Time: " + stopwatch.ElapsedMilliseconds/1000 + " seconds");
+            
+            Console.WriteLine("Finding Closest Images Execution Time: " + stopwatchFindClosestImage.ElapsedMilliseconds + " ms");
+            
+            ClearMemory();
+        }
+
+        private void ClearMemory()
+        {
+            System.GC.Collect();
+            System.GC.WaitForPendingFinalizers();
+            System.GC.Collect();
         }
 
         private Image FindClosestImageAvgColor(List<Image> SourceImages, Color avgcolor)
@@ -85,24 +106,70 @@ namespace PhotoMosaic {
 
         private List<Image> ProcessSourceImages(string SourceImagesDirectory)
         {
+            var stopwatchProcessImages = new System.Diagnostics.Stopwatch();
+            stopwatchProcessImages.Start();
             Console.WriteLine("Source Directory: " + SourceImagesDirectory);
 
-            List<Image> sourceImages = new List<Image>();
+            List<string> filenames = new List<string>();
+            int counter = 0;
             foreach (string s in Directory.EnumerateFiles(@SourceImagesDirectory, "*.*", SearchOption.AllDirectories))
+            {
+                filenames.Add(s);
+                counter++;
+            }
+
+            Console.WriteLine("Input Images used: " + counter);
+
+            List<Image> sourceImages = new List<Image>();
+            foreach (string s in filenames)
             {
                 //Console.WriteLine("In Directory: " + s);
                 Image nwImage = new Image(s, 64);
                 nwImage.SetAverageColor();
                 sourceImages.Add(nwImage);
             }
-
-            Console.WriteLine("Input Images used: " + sourceImages.Count());
-
+            stopwatchProcessImages.Stop();
+            Console.WriteLine("Processing Input Images Execution Time: " + stopwatchProcessImages.ElapsedMilliseconds + " ms");
             return sourceImages;
         }
 
+        private List<Image> ProcessSourceImagesInParrallel(string SourceImagesDirectory)
+        {
+            var stopwatchProcessImages = new System.Diagnostics.Stopwatch();
+            stopwatchProcessImages.Start();
+            Console.WriteLine("Source Directory: " + SourceImagesDirectory);
+
+            List<string> filenames = new List<string>();
+            int counter = 0;
+            foreach (string s in Directory.EnumerateFiles(@SourceImagesDirectory, "*.*", SearchOption.AllDirectories))
+            {
+                filenames.Add(s);
+                counter++;
+            }
+            Console.WriteLine("Input Images used: " + counter);
+
+
+            List<Image> sourceImages = new List<Image>();
+            Parallel.ForEach(filenames, s =>
+            {
+                //Console.WriteLine("In Directory: " + s);
+                Image nwImage = new Image(s, 64);
+                nwImage.SetAverageColor();
+                sourceImages.Add(nwImage);
+            });
+
+            stopwatchProcessImages.Stop();
+            Console.WriteLine("Processing Input Images in Parallel Execution Time: " + stopwatchProcessImages.ElapsedMilliseconds/1000 + " seconds");
+            return sourceImages;
+        }
+
+
+
         public Bitmap CreateOutPutBitmap()
         {
+            var stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+
             Bitmap result = new Bitmap(800, 800);
             Graphics canvas = Graphics.FromImage(result);
 
@@ -112,12 +179,22 @@ namespace PhotoMosaic {
             {
                 for (int w = 0; w < Cells; w++)
                 {
-                    mosaicImages[h, w].bitmap = ImageEditor.ResizeImageKeepAspectRatio(mosaicImages[h, w].bitmap, 800/Cells, 800/Cells);
+                    //mosaicImages[h, w].ImportImage();
+                    mosaicImages[h, w].bitmap = ImageEditor.ResizeImageKeepAspectRatio(mosaicImages[h, w].ImageURI, 800/Cells, 800/Cells);
                     canvas.DrawImage(mosaicImages[h, w].bitmap, new Point(h * Width_Height, w * Width_Height));
+                    //mosaicImages[h, w].ClearImageBitmap();
                 }
             }
-
+            stopwatch.Stop();
+            Console.WriteLine("Output Execution Time: " + stopwatch.ElapsedMilliseconds / 1000 + " seconds");
             return result;
+        }
+
+        public void ClearScreen()
+        {
+            var b = new Bitmap(1, 1);
+            b.SetPixel(0, 0, Color.White);
+            pictureBox.Image = new Bitmap(b, 800, 800);
         }
 
         public void Draw(Bitmap bitmap)

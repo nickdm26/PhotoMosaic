@@ -102,5 +102,32 @@ namespace PhotoMosaic {
             ImageController imgController = new ImageController(pictureBox1);
             imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images");
         }
+
+        private void Button5_Click(object sender, EventArgs e)
+        {
+            ImageController imgController = new ImageController(pictureBox1);
+            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\n02085620-Chihuahua\");
+        }
+
+        private void Button6_Click(object sender, EventArgs e)
+        {
+            Clear();
+            ImageController imgController = new ImageController(pictureBox1);
+            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\Test\");
+        }
+
+        public void Clear()
+        {
+            var b = new Bitmap(1, 1);
+            b.SetPixel(0, 0, Color.Black);
+            pictureBox1.Image = new Bitmap(b, 800, 800);
+        }
+
+        private void Button7_Click(object sender, EventArgs e)
+        {
+            Clear();
+            ImageController imgController = new ImageController(pictureBox1);
+            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Dogs\");
+        }
     }
 }
