@@ -16,6 +16,7 @@ namespace PhotoMosaic {
         Image[,] mosaicImages;
         Color[,] AVGColors;
         int Cells = 64;
+        ImageCache imagecache;
 
 
 
@@ -30,10 +31,16 @@ namespace PhotoMosaic {
             
             var stopwatchFindClosestImage = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
-            
+
+            imagecache = new ImageCache();
 
             //List<Image> SourceImages = ProcessSourceImages(SourceImagesDirectory);
             List<Image> SourceImages = ProcessSourceImagesInParrallel(SourceImagesDirectory);
+
+            //foreach(Image i in SourceImages)
+            //{
+            //    imagecache.AddImageToCache(i.ImageURI, i.AvgColor.R, i.AvgColor.G, i.AvgColor.B);
+            //}
 
 
             inputImage = new SourceImage(pictureBox, Cells, InputImageFileName);
@@ -64,7 +71,8 @@ namespace PhotoMosaic {
             Console.WriteLine("Total Execution Time: " + stopwatch.ElapsedMilliseconds/1000 + " seconds");
             
             Console.WriteLine("Finding Closest Images Execution Time: " + stopwatchFindClosestImage.ElapsedMilliseconds + " ms");
-            
+
+            //imagecache.SaveImageCache();
             ClearMemory();
         }
 
@@ -141,12 +149,12 @@ namespace PhotoMosaic {
 
             List<string> filenames = new List<string>();
             int counter = 0;
-            foreach (string s in Directory.EnumerateFiles(@SourceImagesDirectory, "*.*", SearchOption.AllDirectories))
+            foreach (string s in Directory.EnumerateFiles(@SourceImagesDirectory, "*.*", SearchOption.AllDirectories)) //Foreach loop used to count how many images are going to be processed.
             {
                 filenames.Add(s);
                 counter++;
             }
-            Console.WriteLine("Input Images used: " + counter);
+            Console.WriteLine("Input Images used: " + counter); //Writes to console how many images are going to be processed.
 
 
             List<Image> sourceImages = new List<Image>();
@@ -158,6 +166,7 @@ namespace PhotoMosaic {
                 sourceImages.Add(nwImage);
             });
 
+            
             stopwatchProcessImages.Stop();
             Console.WriteLine("Processing Input Images in Parallel Execution Time: " + stopwatchProcessImages.ElapsedMilliseconds/1000 + " seconds");
             return sourceImages;
@@ -216,6 +225,11 @@ namespace PhotoMosaic {
             {
                 Console.WriteLine("In Directory: " + s);
             }
+        }
+
+        public void SaveStats()
+        {
+
         }
     }
 }

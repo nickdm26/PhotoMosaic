@@ -111,9 +111,11 @@ namespace PhotoMosaic {
 
         private void Button6_Click(object sender, EventArgs e)
         {
-            Clear();
-            ImageController imgController = new ImageController(pictureBox1);
-            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\Test\");
+            //Clear();
+            //ImageController imgController = new ImageController(pictureBox1);
+            //imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\Test\");
+            ImageCache cache = new ImageCache();
+            cache.SaveImageCache();
         }
 
         public void Clear()
