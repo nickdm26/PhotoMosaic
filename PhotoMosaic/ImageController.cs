@@ -33,9 +33,11 @@ namespace PhotoMosaic {
             stopwatch.Start();
 
             imagecache = new ImageCache();
+            imagecache.ReadImageCache();
 
             //List<Image> SourceImages = ProcessSourceImages(SourceImagesDirectory);
             List<Image> SourceImages = ProcessSourceImagesInParrallel(SourceImagesDirectory);
+            imagecache.SaveImageCache();
 
             //foreach(Image i in SourceImages)
             //{
@@ -72,7 +74,7 @@ namespace PhotoMosaic {
             
             Console.WriteLine("Finding Closest Images Execution Time: " + stopwatchFindClosestImage.ElapsedMilliseconds + " ms");
 
-            //imagecache.SaveImageCache();
+            
             ClearMemory();
         }
 
@@ -162,7 +164,17 @@ namespace PhotoMosaic {
             {
                 //Console.WriteLine("In Directory: " + s);
                 Image nwImage = new Image(s, 64);
-                nwImage.SetAverageColor();
+
+                if (imagecache.DoesImageExistInCache(nwImage.ImageURI))
+                {
+                    nwImage.AvgColor = imagecache.GetColorFromCache(nwImage.ImageURI);
+                }
+                else
+                {
+                    nwImage.SetAverageColor();
+                    imagecache.AddImageToCache(nwImage.ImageURI, nwImage.AvgColor.R, nwImage.AvgColor.G, nwImage.AvgColor.B);
+                }
+                nwImage.ClearImageBitmap();
                 sourceImages.Add(nwImage);
             });
 

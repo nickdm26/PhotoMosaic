@@ -116,6 +116,7 @@ namespace PhotoMosaic {
             //imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\Test\");
             ImageCache cache = new ImageCache();
             cache.SaveImageCache();
+            cache.ReadImageCache();
         }
 
         public void Clear()
