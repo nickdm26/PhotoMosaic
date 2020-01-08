@@ -16,8 +16,8 @@ namespace PhotoMosaic {
         public Double Colordiffrence;
         public int Width;
         public int Height;
-        public int Cells = 64;
-        public int CellPixels = 0;
+        public int Cells;
+        public int CellPixels;
 
         public Image(PictureBox pictureBox, int Cells, string filename)
         {

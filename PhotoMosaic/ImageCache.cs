@@ -44,9 +44,9 @@ namespace PhotoMosaic {
 
             string json = JsonConvert.SerializeObject(jsonList);
 
-            Console.WriteLine();
-            Console.WriteLine(json);
-            Console.WriteLine();
+           // Console.WriteLine();
+            //Console.WriteLine(json);
+           // Console.WriteLine();
 
             string filename = @"..\...\..\ImageCache.json";
             File.WriteAllText(filename, json);

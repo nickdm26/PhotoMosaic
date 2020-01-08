@@ -15,6 +15,7 @@ namespace PhotoMosaic {
         int CellsValue;
         string InputImage;
         string SourceImagesFolder;
+        ImageController imgController;
 
         public Form1()
         {
@@ -29,6 +30,7 @@ namespace PhotoMosaic {
         private void Form1_Load(object sender, EventArgs e)
         {   
             CellsValue = (int)numericUpDownCells.Value;
+            imgController = new ImageController(pictureBox1);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -97,19 +99,19 @@ namespace PhotoMosaic {
             }
         }
 
-        private void Button4_Click(object sender, EventArgs e)
+        private void ButtonSlow_Click(object sender, EventArgs e)
         {
             ImageController imgController = new ImageController(pictureBox1);
             imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images");
         }
 
-        private void Button5_Click(object sender, EventArgs e)
+        private void ButtonFast_Click(object sender, EventArgs e)
         {
-            ImageController imgController = new ImageController(pictureBox1);
+            //ImageController imgController = new ImageController(pictureBox1);
             imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\n02085620-Chihuahua\");
         }
 
-        private void Button6_Click(object sender, EventArgs e)
+        private void ButtonSuperFast_Click(object sender, EventArgs e)
         {
             //Clear();
             //ImageController imgController = new ImageController(pictureBox1);
@@ -126,11 +128,26 @@ namespace PhotoMosaic {
             pictureBox1.Image = new Bitmap(b, 800, 800);
         }
 
-        private void Button7_Click(object sender, EventArgs e)
+        private void ButtonAllDogs_Click(object sender, EventArgs e)
         {
             Clear();
             ImageController imgController = new ImageController(pictureBox1);
             imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Dogs\");
+        }
+
+        private void ButtonSave_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog savefiledialog = new SaveFileDialog
+            {
+                Filter = "Bitmap Image (.bmp)|*.bmp|JPEG Image (.jpeg)|*.jpeg|Png Image (.png)|*.png"
+            };
+
+            //savefiledialog.ShowDialog();
+            if(savefiledialog.ShowDialog() == DialogResult.OK)
+            {
+                imgController.Save(savefiledialog.FileName);
+                Console.WriteLine(Path.GetFullPath(savefiledialog.FileName));
+            }
         }
     }
 }

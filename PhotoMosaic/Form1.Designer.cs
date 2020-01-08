@@ -38,6 +38,7 @@
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCells)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -124,7 +125,7 @@
             this.button4.TabIndex = 6;
             this.button4.Text = "Slow Test";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.Button4_Click);
+            this.button4.Click += new System.EventHandler(this.ButtonSlow_Click);
             // 
             // button5
             // 
@@ -134,7 +135,7 @@
             this.button5.TabIndex = 7;
             this.button5.Text = "Fast Test";
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.Button5_Click);
+            this.button5.Click += new System.EventHandler(this.ButtonFast_Click);
             // 
             // button6
             // 
@@ -144,7 +145,7 @@
             this.button6.TabIndex = 8;
             this.button6.Text = "SuperFast";
             this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.Button6_Click);
+            this.button6.Click += new System.EventHandler(this.ButtonSuperFast_Click);
             // 
             // button7
             // 
@@ -154,13 +155,24 @@
             this.button7.TabIndex = 9;
             this.button7.Text = "All Dogs (Super Slow)";
             this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.Button7_Click);
+            this.button7.Click += new System.EventHandler(this.ButtonAllDogs_Click);
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Location = new System.Drawing.Point(1312, 67);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(77, 29);
+            this.buttonSave.TabIndex = 10;
+            this.buttonSave.Text = "Save";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1401, 881);
+            this.Controls.Add(this.buttonSave);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
@@ -192,6 +204,7 @@
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button buttonSave;
     }
 }
 

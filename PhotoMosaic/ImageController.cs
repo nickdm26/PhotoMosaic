@@ -14,9 +14,11 @@ namespace PhotoMosaic {
         SourceImage inputImage;
         PictureBox pictureBox;
         Image[,] mosaicImages;
+        Boolean[,] mosaicImagesDrawn;
         Color[,] AVGColors;
         int Cells = 64;
         ImageCache imagecache;
+        Bitmap CreatedBitmap;
 
 
 
@@ -52,6 +54,7 @@ namespace PhotoMosaic {
 
             AVGColors = inputImage.AVGColors;
             mosaicImages = inputImage.mosaicImages;
+            mosaicImagesDrawn = new Boolean[Cells, Cells];
             ClearMemory();
 
             stopwatchFindClosestImage.Start();
@@ -61,19 +64,20 @@ namespace PhotoMosaic {
                 for(int w = 0; w < Cells; w++)
                 {
                     mosaicImages[h, w] = FindClosestImageAvgColor(SourceImages, AVGColors[h, w]);
+                    mosaicImagesDrawn[h, w] = false;
                 }
             }
             //FindClosestImageAvgColor(SourceImages, inputImage.AvgColor);
             //inputImage.mosaicImages = mosaicImages;     //need to change how this part interacts with SourceImage class.
             stopwatchFindClosestImage.Stop();
 
-            Draw(CreateOutPutBitmap());
+            CreatedBitmap = CreateOutPutBitmap();
+            Draw(CreatedBitmap);
 
             stopwatch.Stop();
             Console.WriteLine("Total Execution Time: " + stopwatch.ElapsedMilliseconds/1000 + " seconds");
             
             Console.WriteLine("Finding Closest Images Execution Time: " + stopwatchFindClosestImage.ElapsedMilliseconds + " ms");
-
             
             ClearMemory();
         }
@@ -85,6 +89,7 @@ namespace PhotoMosaic {
             System.GC.Collect();
         }
 
+        //Return 1st in the sortedQuery as its how far away from the Color its comparing against.
         private Image FindClosestImageAvgColor(List<Image> SourceImages, Color avgcolor)
         {
             foreach(Image i in SourceImages)        //Loop through each Image in the list to set the ColorDiffrence field
@@ -96,22 +101,14 @@ namespace PhotoMosaic {
                 from i in SourceImages
                 orderby i.Colordiffrence ascending
                 select i;
-
-            //Console.WriteLine("Color num to match: " + avgcolor);
-
-            //foreach(var i in sortedQuery)
-            //{
-            //    Console.WriteLine("Sorted Colors: " + i.Colordiffrence);
-            //}
-            //Return 1st in the sortedQuery as its how far away from the Color its comparing against.
-
+            
             Image answer = sortedQuery.First(); //gets the first element from the Sorted LINQ Query
             return answer;
         }
 
-        public void SaveMosiac(Bitmap mosaicBitmap, string SaveLocation)
+        public void Save(string SaveLocation)
         {
-
+            CreatedBitmap.Save(SaveLocation);
         }
 
         private List<Image> ProcessSourceImages(string SourceImagesDirectory)
@@ -193,23 +190,53 @@ namespace PhotoMosaic {
 
             Bitmap result = new Bitmap(800, 800);
             Graphics canvas = Graphics.FromImage(result);
-
+            Image currentImage = null;
+            Bitmap resizedBitmap = null;
 
             int Width_Height = 800 / Cells;
             for (int h = 0; h < Cells; h++)    //loop though mosaicImages array
             {
                 for (int w = 0; w < Cells; w++)
                 {
-                    //mosaicImages[h, w].ImportImage();
-                    mosaicImages[h, w].bitmap = ImageEditor.ResizeImageKeepAspectRatio(mosaicImages[h, w].ImageURI, 800/Cells, 800/Cells);
-                    canvas.DrawImage(mosaicImages[h, w].bitmap, new Point(h * Width_Height, w * Width_Height));
-                    //mosaicImages[h, w].ClearImageBitmap();
+                    if(mosaicImagesDrawn[h, w] == false)
+                    {
+                        resizedBitmap = ImageEditor.ResizeImageKeepAspectRatio(mosaicImages[h, w].ImageURI, 800 / Cells, 800 / Cells);
+                        currentImage = mosaicImages[h, w];
+                        mosaicImages[h, w].bitmap = resizedBitmap;
+                        canvas.DrawImage(mosaicImages[h, w].bitmap, new Point(h * Width_Height, w * Width_Height));
+                        mosaicImagesDrawn[h, w] = true;
+
+                        DrawSameImages(result, h, w, currentImage, resizedBitmap, Width_Height, canvas);
+                    }
+                    
                 }
             }
             stopwatch.Stop();
-            Console.WriteLine("Output Execution Time: " + stopwatch.ElapsedMilliseconds / 1000 + " seconds");
+            Console.WriteLine("Output Execution Time: " + stopwatch.ElapsedMilliseconds + " ms");
             return result;
         }
+
+        private void DrawSameImages(Bitmap result, int hposition, int wposition, Image currentImage, Bitmap resizedBitmap, int Width_Height, Graphics canvas){
+            for (int h = hposition; h < Cells; h++)    
+            {
+                for (int w = wposition; w < Cells; w++)
+                {
+                    if (mosaicImagesDrawn[h, w] == false)
+                    {
+                        if (currentImage == mosaicImages[h, w])
+                        {
+                            //resizedBitmap = ImageEditor.ResizeImageKeepAspectRatio(mosaicImages[h, w].ImageURI, 800 / Cells, 800 / Cells);
+                            //currentImage = mosaicImages[h, w];
+                            mosaicImages[h, w].bitmap = resizedBitmap;
+                            canvas.DrawImage(mosaicImages[h, w].bitmap, new Point(h * Width_Height, w * Width_Height));
+                            mosaicImagesDrawn[h, w] = true;
+                        }                        
+                    }
+                }
+            }
+        }
+
+
 
         public void ClearScreen()
         {
