@@ -19,7 +19,7 @@ namespace PhotoMosaic {
         int Cells = 64;
         ImageCache imagecache;
         Bitmap CreatedBitmap;
-
+        int Size = 800;
 
 
         public ImageController(PictureBox pictureBox)
@@ -29,7 +29,9 @@ namespace PhotoMosaic {
 
         public void GenerateMosaic(string InputImageFileName, string SourceImagesDirectory)
         {
+            
             var stopwatch = new System.Diagnostics.Stopwatch();
+            var stopwatchDraw = new System.Diagnostics.Stopwatch();
             
             var stopwatchFindClosestImage = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
@@ -48,37 +50,50 @@ namespace PhotoMosaic {
 
 
             inputImage = new SourceImage(pictureBox, Cells, InputImageFileName);
-            inputImage.bitmap = ImageEditor.ResizeImageKeepAspectRatio(inputImage.bitmap, 800, 800);
+            inputImage.bitmap = ImageEditor.ResizeImageKeepAspectRatio(inputImage.bitmap, Size, Size);
+
             inputImage.CalculateAVGCellColors();
-            inputImage.SetAverageColor();   //Delete me later
+            //inputImage.SetAverageColor();   //Delete me later
 
             AVGColors = inputImage.AVGColors;
             mosaicImages = inputImage.mosaicImages;
             mosaicImagesDrawn = new Boolean[Cells, Cells];
             ClearMemory();
-
             stopwatchFindClosestImage.Start();
 
-            for(int h = 0; h < Cells; h++)
+            for (int h = 0; h < Cells; h++)
             {
-                for(int w = 0; w < Cells; w++)
+                for (int w = 0; w < Cells; w++)
                 {
                     mosaicImages[h, w] = FindClosestImageAvgColor(SourceImages, AVGColors[h, w]);
                     mosaicImagesDrawn[h, w] = false;
                 }
             }
+
+            //for (int h = 0; h < Cells; h++)
+            //{
+            //    Parallel.For(0, Cells, w =>
+            //    {
+            //        mosaicImages[h, w] = FindClosestImageAvgColor(SourceImages, AVGColors[h, w]);
+            //        mosaicImagesDrawn[h, w] = false;
+            //    });
+            //}
+
             //FindClosestImageAvgColor(SourceImages, inputImage.AvgColor);
             //inputImage.mosaicImages = mosaicImages;     //need to change how this part interacts with SourceImage class.
             stopwatchFindClosestImage.Stop();
+            
 
             CreatedBitmap = CreateOutPutBitmap();
+            stopwatchDraw.Start();
             Draw(CreatedBitmap);
+            stopwatchDraw.Stop();
 
             stopwatch.Stop();
-            Console.WriteLine("Total Execution Time: " + stopwatch.ElapsedMilliseconds/1000 + " seconds");
-            
             Console.WriteLine("Finding Closest Images Execution Time: " + stopwatchFindClosestImage.ElapsedMilliseconds + " ms");
-            
+            Console.WriteLine("Drawing Image: " + stopwatchDraw.ElapsedMilliseconds + " ms");
+            Console.WriteLine("Total Execution Time: " + stopwatch.ElapsedMilliseconds/1000 + " seconds");
+                       
             ClearMemory();
         }
 
@@ -188,19 +203,19 @@ namespace PhotoMosaic {
             var stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
 
-            Bitmap result = new Bitmap(800, 800);
+            Bitmap result = new Bitmap(Size, Size);
             Graphics canvas = Graphics.FromImage(result);
             Image currentImage = null;
             Bitmap resizedBitmap = null;
 
-            int Width_Height = 800 / Cells;
+            int Width_Height = Size / Cells;
             for (int h = 0; h < Cells; h++)    //loop though mosaicImages array
             {
                 for (int w = 0; w < Cells; w++)
                 {
                     if(mosaicImagesDrawn[h, w] == false)
                     {
-                        resizedBitmap = ImageEditor.ResizeImageKeepAspectRatio(mosaicImages[h, w].ImageURI, 800 / Cells, 800 / Cells);
+                        resizedBitmap = ImageEditor.ResizeImageKeepAspectRatio(mosaicImages[h, w].ImageURI, Size / Cells, Size / Cells);
                         currentImage = mosaicImages[h, w];
                         mosaicImages[h, w].bitmap = resizedBitmap;
                         canvas.DrawImage(mosaicImages[h, w].bitmap, new Point(h * Width_Height, w * Width_Height));
@@ -242,7 +257,7 @@ namespace PhotoMosaic {
         {
             var b = new Bitmap(1, 1);
             b.SetPixel(0, 0, Color.White);
-            pictureBox.Image = new Bitmap(b, 800, 800);
+            pictureBox.Image = new Bitmap(b, Size, Size);
         }
 
         public void Draw(Bitmap bitmap)

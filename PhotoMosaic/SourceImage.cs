@@ -27,16 +27,43 @@ namespace PhotoMosaic {
             mosaicImages = new Image[Cells, Cells];
         }
 
+        private void SetWidthHeightCellPixels()
+        {
+            Width = bitmap.Width;
+            Height = bitmap.Height;
+            CellPixels = Width / Cells;
+        }
+
         public void CalculateAVGCellColors()
         {
-            for(int w = 0; w < Cells; w++)
+            var StopwatchCalculateAvgCellColors = new System.Diagnostics.Stopwatch();
+            StopwatchCalculateAvgCellColors.Start();
+            SetWidthHeightCellPixels();
+
+            for (int w = 0; w < Cells; w++)
             {
-                for(int h = 0; h < Cells; h++)
+                for (int h = 0; h < Cells; h++)
                 {
-                    AVGColors[w, h] = CalculateSection(w * CellPixels, h * CellPixels, (w*CellPixels) + CellPixels, (h*CellPixels)+CellPixels);
+                    AVGColors[w, h] = CalculateSection(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);
+
                     //Console.WriteLine(AVGColors[w, h]);
+                    //AVGColors[w, h] = CalculateSectionUsingLockBits(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);
+
                 }
             }
+
+            //for (int w = 0; w < Cells; w++)
+            //{
+            //    Parallel.For(0, Cells, h =>
+            //    {
+            //        AVGColors[w, h] = CalculateSection(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);
+            //        //Console.WriteLine(AVGColors[w, h]);
+            //    });
+            //}
+
+
+            StopwatchCalculateAvgCellColors.Stop();
+            Console.WriteLine("Calculating Avg Cell Colors: " + StopwatchCalculateAvgCellColors.ElapsedMilliseconds + " ms");
         }
 
         public void DrawAvgColors()

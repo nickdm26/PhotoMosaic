@@ -45,7 +45,7 @@ namespace PhotoMosaic {
             //ImgEdit.ImportImage_CropAndResize_Save(sourceImage);
             //Image nwImage = new Image(pictureBox1, CellsValue, ImgEdit.saveFileName);
 
-            ImageController imgController = new ImageController(pictureBox1);
+            //ImageController imgController = new ImageController(pictureBox1);
             imgController.GenerateMosaic(InputImage, SourceImagesFolder);
         }
 
@@ -101,7 +101,7 @@ namespace PhotoMosaic {
 
         private void ButtonSlow_Click(object sender, EventArgs e)
         {
-            ImageController imgController = new ImageController(pictureBox1);
+            //ImageController imgController = new ImageController(pictureBox1);
             imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images");
         }
 
@@ -115,10 +115,8 @@ namespace PhotoMosaic {
         {
             //Clear();
             //ImageController imgController = new ImageController(pictureBox1);
-            //imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\Test\");
-            ImageCache cache = new ImageCache();
-            cache.SaveImageCache();
-            cache.ReadImageCache();
+            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\Test\");
+            
         }
 
         public void Clear()
