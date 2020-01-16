@@ -69,7 +69,7 @@ namespace PhotoMosaic {
             return CalculatedBrightness;
         }
 
-        protected Color CalculateSection(int Start_x, int Start_y, int End_x, int End_y)
+        public Color CalculateSection(int Start_x, int Start_y, int End_x, int End_y)
         {
             int r = 0;
             int g = 0;
@@ -99,15 +99,17 @@ namespace PhotoMosaic {
 
             return answer;
         }
+               
 
-        protected Color CalculateSectionUsingLockBits(int Start_x, int Start_y, int End_x, int End_y)
+        public Color CalculateSectionUsingLockBits(int Start_x, int Start_y, int End_x, int End_y)
         {
-            int red = 0;
-            int green = 0;
-            int blue = 0;
+            float red = 0;
+            float green = 0;
+            float blue = 0;
             int pixelAmount = (End_x - Start_x) * (End_y - Start_y);
             int counter = 0;
-
+            
+            
             unsafe
             {             
                 //Lock The bitmap into system memory
@@ -120,6 +122,7 @@ namespace PhotoMosaic {
                 int bytesPerPixel = System.Drawing.Bitmap.GetPixelFormatSize(bitmap.PixelFormat) / 8;
                 int heightInPixels = bitmapData.Height;
                 int widthInBytes = bitmapData.Width * bytesPerPixel;
+                int end = (End_y * bytesPerPixel);
 
                 //Define a pointer to the first pixel in the locked image
                 //Scan0 gets or sets the address of the first pixel data in the bitmap.
@@ -146,12 +149,12 @@ namespace PhotoMosaic {
                 {
                     //use the 'Stride' (scanline width) property to step line by line thru the image
                     byte* currentLine = PtrFirstPixel + (w * bitmapData.Stride);
-                    int end = (End_y * bytesPerPixel);
+                    
                     for (int h = Start_y; h < end; h = h + bytesPerPixel)
                     {
-                        blue += Convert.ToInt32(currentLine[h]);
-                        green += Convert.ToInt32(currentLine[h + 1]);
-                        red += Convert.ToInt32(currentLine[h + 2]);
+                        blue += currentLine[h];
+                        green += currentLine[h + 1];
+                        red += currentLine[h + 2];
                         counter++;
                     }
                 }
@@ -164,6 +167,7 @@ namespace PhotoMosaic {
             green = green / pixelAmount;
             blue = blue / pixelAmount;
 
+            //Testing stuff
             if(red > 255)
             {
                 Console.WriteLine("red: " + red);
@@ -179,7 +183,7 @@ namespace PhotoMosaic {
                 Console.WriteLine("blue: " + blue);
                 blue = 255;
             }
-            Color answer = Color.FromArgb(red, green, blue);
+            Color answer = Color.FromArgb((int) red, (int) green, (int) blue);
             return answer;
         }
 

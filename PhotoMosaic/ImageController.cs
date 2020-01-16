@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PhotoMosaic {
-    class ImageController {
+namespace PhotoMosaic
+{
+    class ImageController
+    {
         string sourceFolderFilePath;
         SourceImage inputImage;
         PictureBox pictureBox;
@@ -27,76 +27,66 @@ namespace PhotoMosaic {
             this.pictureBox = pictureBox;
         }
 
+        /*
+         * GenerateMosaic is the main method of this class used to Generate a PhotoMosaic
+         * Finds the AverageColor of the Images
+         * Resizes the InputImage to a usable size
+         * Splits the Input Image into Cells Calculating the averageColor for each Cell
+         * Finds the Closest Image for Every Cell in the input image.
+         * Creates the Output Image.
+         * Draws the Image to the Screen.
+         */
         public void GenerateMosaic(string InputImageFileName, string SourceImagesDirectory)
         {
-            
-            var stopwatch = new System.Diagnostics.Stopwatch();
+            var stopwatch = new System.Diagnostics.Stopwatch();         //StopWatch to Calculate Overall time
             var stopwatchDraw = new System.Diagnostics.Stopwatch();
-            
+
             var stopwatchFindClosestImage = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
 
-            imagecache = new ImageCache();
-            imagecache.ReadImageCache();
+            imagecache = new ImageCache();          //Intialises the Image Cache
+            imagecache.ReadImageCache();            //ImageCache Reads from its file.
 
-            //List<Image> SourceImages = ProcessSourceImages(SourceImagesDirectory);
-            List<Image> SourceImages = ProcessSourceImagesInParrallel(SourceImagesDirectory);
-            imagecache.SaveImageCache();
+            List<Image> SourceImages = ProcessSourceImagesInParrallel(SourceImagesDirectory);   //Creates a List of Images by Calling ProcessSourceImagesInParrallel
+            imagecache.SaveImageCache();                                                        //Saves the Cache    
+            inputImage = new SourceImage(pictureBox, Cells, InputImageFileName);                //Creates a SourceImage variable to be used
+            inputImage.bitmap = ImageEditor.ResizeImageKeepAspectRatio(inputImage.bitmap, Size, Size);      //Resizes the Input Image to be the required Dimensions
 
-            //foreach(Image i in SourceImages)
-            //{
-            //    imagecache.AddImageToCache(i.ImageURI, i.AvgColor.R, i.AvgColor.G, i.AvgColor.B);
-            //}
+            inputImage.CalculateAVGCellColors();    //Calls CalculateAvgCellColors to Break the Input Image down into Cells and Calculate the Average Color for each cell
 
-
-            inputImage = new SourceImage(pictureBox, Cells, InputImageFileName);
-            inputImage.bitmap = ImageEditor.ResizeImageKeepAspectRatio(inputImage.bitmap, Size, Size);
-
-            inputImage.CalculateAVGCellColors();
-            //inputImage.SetAverageColor();   //Delete me later
-
-            AVGColors = inputImage.AVGColors;
+            //Fix this VVVVV
+            AVGColors = inputImage.AVGColors;       //Creates a 2d array of Color which is filled from the Input Images AverageColors.
             mosaicImages = inputImage.mosaicImages;
             mosaicImagesDrawn = new Boolean[Cells, Cells];
+            //Fix this ^^^^^
             ClearMemory();
-            stopwatchFindClosestImage.Start();
 
+            stopwatchFindClosestImage.Start();  //Start the stopwatch to time Calculate finding the Cloest images
             for (int h = 0; h < Cells; h++)
             {
                 for (int w = 0; w < Cells; w++)
                 {
-                    mosaicImages[h, w] = FindClosestImageAvgColor(SourceImages, AVGColors[h, w]);
-                    mosaicImagesDrawn[h, w] = false;
+                    mosaicImages[h, w] = FindClosestImageAvgColor(SourceImages, AVGColors[h, w]);   //Loop over all the MosaicImage Cells Finding and Setting the Image with the ClosestAvgColor.
+                    mosaicImagesDrawn[h, w] = false;                                                //Set every MosaicImagesDrawn Cell to False.    
                 }
             }
-
-            //for (int h = 0; h < Cells; h++)
-            //{
-            //    Parallel.For(0, Cells, w =>
-            //    {
-            //        mosaicImages[h, w] = FindClosestImageAvgColor(SourceImages, AVGColors[h, w]);
-            //        mosaicImagesDrawn[h, w] = false;
-            //    });
-            //}
-
-            //FindClosestImageAvgColor(SourceImages, inputImage.AvgColor);
-            //inputImage.mosaicImages = mosaicImages;     //need to change how this part interacts with SourceImage class.
-            stopwatchFindClosestImage.Stop();
+            stopwatchFindClosestImage.Stop();   //Stop Timing Finding the Cloest Image.
             
-
-            CreatedBitmap = CreateOutPutBitmap();
+            CreatedBitmap = CreateOutPutBitmap();   //Calls CreateOutPutBitmap and saves it as a global varable.
             stopwatchDraw.Start();
-            Draw(CreatedBitmap);
+            Draw(CreatedBitmap);                    //Calls Draw to Draw the Bitmap
             stopwatchDraw.Stop();
 
             stopwatch.Stop();
-            Console.WriteLine("Finding Closest Images Execution Time: " + stopwatchFindClosestImage.ElapsedMilliseconds + " ms");
+            Console.WriteLine("Finding Closest Images Execution Time: " + stopwatchFindClosestImage.ElapsedMilliseconds + " ms");       //Prints to Console some Times that methods took to run.
             Console.WriteLine("Drawing Image: " + stopwatchDraw.ElapsedMilliseconds + " ms");
-            Console.WriteLine("Total Execution Time: " + stopwatch.ElapsedMilliseconds/1000 + " seconds");
-                       
+            Console.WriteLine("Total Execution Time: " + stopwatch.ElapsedMilliseconds / 1000 + " seconds");
             ClearMemory();
         }
 
+        /*
+         * ClearMemory is used to Forcefully call the garbage Collector.
+         */
         private void ClearMemory()
         {
             System.GC.Collect();
@@ -104,154 +94,132 @@ namespace PhotoMosaic {
             System.GC.Collect();
         }
 
-        //Return 1st in the sortedQuery as its how far away from the Color its comparing against.
+        /*
+         * FindClosestImageAvgColor is used to Compare All the AverageColors of the Images and return the closest Matching to avgcolor
+         */
         private Image FindClosestImageAvgColor(List<Image> SourceImages, Color avgcolor)
-        {
-            foreach(Image i in SourceImages)        //Loop through each Image in the list to set the ColorDiffrence field
-            {                                       
-                i.Colordiffrence = i.CompareColors(avgcolor);   //Should change this line it seems unnecessary
-            }
-
-            var sortedQuery =       //LINQ Query used to sort the Images by ColorDiffrence
-                from i in SourceImages
-                orderby i.Colordiffrence ascending
+        {            
+            var sortedQuery =       //Use Linq as Parallel to loop over the SourceImages 
+                from i in SourceImages.AsParallel()
+                orderby i.Colordiffrence = i.CompareColors(avgcolor) ascending  //Call the CompareColors method and then order them by ColorDiffrence.
                 select i;
-            
+
             Image answer = sortedQuery.First(); //gets the first element from the Sorted LINQ Query
             return answer;
         }
 
+        /*
+         * Save is passed a FilePath as a string
+         * It then saves the Bitmap at that location
+         */
         public void Save(string SaveLocation)
         {
             CreatedBitmap.Save(SaveLocation);
         }
 
-        private List<Image> ProcessSourceImages(string SourceImagesDirectory)
-        {
-            var stopwatchProcessImages = new System.Diagnostics.Stopwatch();
-            stopwatchProcessImages.Start();
-            Console.WriteLine("Source Directory: " + SourceImagesDirectory);
-
-            List<string> filenames = new List<string>();
-            int counter = 0;
-            foreach (string s in Directory.EnumerateFiles(@SourceImagesDirectory, "*.*", SearchOption.AllDirectories))
-            {
-                filenames.Add(s);
-                counter++;
-            }
-
-            Console.WriteLine("Input Images used: " + counter);
-
-            List<Image> sourceImages = new List<Image>();
-            foreach (string s in filenames)
-            {
-                //Console.WriteLine("In Directory: " + s);
-                Image nwImage = new Image(s, 64);
-                nwImage.SetAverageColor();
-                sourceImages.Add(nwImage);
-            }
-            stopwatchProcessImages.Stop();
-            Console.WriteLine("Processing Input Images Execution Time: " + stopwatchProcessImages.ElapsedMilliseconds + " ms");
-            return sourceImages;
-        }
-
+        /*
+         * ProcessSourceImagesInParrallel is used to Process the images in the Directory Chossen.
+         * It will return a list of Images.
+         * 
+         * Search though the Directory provided and adds the images to a list of strings.
+         * Loop over the List of Strings Using Parallel ForEach (Performs a Foreach using multiple threads, Alost Faster)
+         * Creates an image, Checks if it Exists in the ImageCache if so it Grabs the AverageColor.
+         * If it does not exist then it has to calculate the AverageColor, Adds the image info to the ImageCache.
+         */
         private List<Image> ProcessSourceImagesInParrallel(string SourceImagesDirectory)
         {
-            var stopwatchProcessImages = new System.Diagnostics.Stopwatch();
+            var stopwatchProcessImages = new System.Diagnostics.Stopwatch();    //Stopwatch used to Time how long the Processing Takes
             stopwatchProcessImages.Start();
             Console.WriteLine("Source Directory: " + SourceImagesDirectory);
 
             List<string> filenames = new List<string>();
-            int counter = 0;
-            foreach (string s in Directory.EnumerateFiles(@SourceImagesDirectory, "*.*", SearchOption.AllDirectories)) //Foreach loop used to count how many images are going to be processed.
+            foreach (string s in Directory.EnumerateFiles(@SourceImagesDirectory, "*.*", SearchOption.AllDirectories)) //Foreach loop iterate thought the directory and add the images to a list of strings.
             {
                 filenames.Add(s);
-                counter++;
             }
-            Console.WriteLine("Input Images used: " + counter); //Writes to console how many images are going to be processed.
-
-
+            Console.WriteLine("Input Images used: " + filenames.Count); //Writes to console how many images are going to be processed.
+            
             List<Image> sourceImages = new List<Image>();
-            Parallel.ForEach(filenames, s =>
+            Parallel.ForEach(filenames, name =>            //Parallel For Each Loop used to loop over each of the filenames
             {
-                //Console.WriteLine("In Directory: " + s);
-                Image nwImage = new Image(s, 64);
+                Image nwImage = new Image(name, Cells);    //Creates a new Image, passing the filename and Cells.
 
-                if (imagecache.DoesImageExistInCache(nwImage.ImageURI))
+                if (imagecache.DoesImageExistInCache(nwImage.ImageURI))     //Calls the ImageCache to Check if its in the ImageCache
                 {
-                    nwImage.AvgColor = imagecache.GetColorFromCache(nwImage.ImageURI);
+                    nwImage.AvgColor = imagecache.GetColorFromCache(nwImage.ImageURI);  //Sets the AvgColor of the Image from the Color saved in the cache
                 }
                 else
                 {
-                    nwImage.SetAverageColor();
-                    imagecache.AddImageToCache(nwImage.ImageURI, nwImage.AvgColor.R, nwImage.AvgColor.G, nwImage.AvgColor.B);
+                    nwImage.SetAverageColor();          //If not in the ImageCache it has to Calculate the AvgerageColor
+                    imagecache.AddImageToCache(nwImage.ImageURI, nwImage.AvgColor.R, nwImage.AvgColor.G, nwImage.AvgColor.B);   //Adds the Image information to the cache because its not there.
                 }
-                nwImage.ClearImageBitmap();
-                sourceImages.Add(nwImage);
+                nwImage.ClearImageBitmap();     //Dispose of the Bitmap to perserve memory
+                sourceImages.Add(nwImage);      //Adds the Image to the List of Images
             });
 
-            
-            stopwatchProcessImages.Stop();
-            Console.WriteLine("Processing Input Images in Parallel Execution Time: " + stopwatchProcessImages.ElapsedMilliseconds/1000 + " seconds");
+            stopwatchProcessImages.Stop();      //Stop the Timer
+            Console.WriteLine("Processing Input Images in Parallel Execution Time: " + stopwatchProcessImages.ElapsedMilliseconds / 1000 + " seconds");
             return sourceImages;
         }
 
 
-
+        /*
+         * CreateOuputBitmap is used to Create the Output Bitmap which will then be shown on the screen.
+         */
         public Bitmap CreateOutPutBitmap()
         {
-            var stopwatch = new System.Diagnostics.Stopwatch();
+            var stopwatch = new System.Diagnostics.Stopwatch();     //Stopwatch used to time how long it takes to create the Output Bitmap.
             stopwatch.Start();
 
-            Bitmap result = new Bitmap(Size, Size);
-            Graphics canvas = Graphics.FromImage(result);
+            Bitmap result = new Bitmap(Size, Size);                 //Create a bitmap with the required Dimensions
+            Graphics canvas = Graphics.FromImage(result);           //Create a Graphics object from the Bitmap to draw on.
             Image currentImage = null;
             Bitmap resizedBitmap = null;
 
-            int Width_Height = Size / Cells;
-            for (int h = 0; h < Cells; h++)    //loop though mosaicImages array
+            int Cell_Width_Height = Size / Cells;                        //Create variable with Dimensions of Cell Area
+            for (int r = 0; r < Cells; r++)    //loop though mosaicImages array
             {
-                for (int w = 0; w < Cells; w++)
+                for (int c = 0; c < Cells; c++)
                 {
-                    if(mosaicImagesDrawn[h, w] == false)
+                    if (mosaicImagesDrawn[r, c] == false)       //If Cell area has not been drawn.
                     {
-                        resizedBitmap = ImageEditor.ResizeImageKeepAspectRatio(mosaicImages[h, w].ImageURI, Size / Cells, Size / Cells);
-                        currentImage = mosaicImages[h, w];
-                        mosaicImages[h, w].bitmap = resizedBitmap;
-                        canvas.DrawImage(mosaicImages[h, w].bitmap, new Point(h * Width_Height, w * Width_Height));
-                        mosaicImagesDrawn[h, w] = true;
+                        resizedBitmap = ImageEditor.ResizeImageKeepAspectRatio(mosaicImages[r, c].ImageURI, Size / Cells, Size / Cells);    //Resize the image from mosaicImages
+                        currentImage = mosaicImages[r, c];          //Save the Current Image from mosaicImages thats being used
+                        mosaicImages[r, c].bitmap = resizedBitmap;  //give mosaicImages the resized Image
+                        canvas.DrawImage(mosaicImages[r, c].bitmap, new Point(r * Cell_Width_Height, c * Cell_Width_Height));   //Draw the newly resized Bitmap to the canvas
+                        mosaicImagesDrawn[r, c] = true;             //Set the MosaicImagesDraw to True
 
-                        DrawSameImages(result, h, w, currentImage, resizedBitmap, Width_Height, canvas);
+                        DrawSameImages(r, c, currentImage, resizedBitmap, Cell_Width_Height, canvas);   //Calls DrawSameImages so we dont need to resize the same image over and over.
                     }
-                    
                 }
             }
             stopwatch.Stop();
             Console.WriteLine("Output Execution Time: " + stopwatch.ElapsedMilliseconds + " ms");
-            return result;
+            return result;              //Return the Created Bitmap Yay!!!
         }
 
-        private void DrawSameImages(Bitmap result, int hposition, int wposition, Image currentImage, Bitmap resizedBitmap, int Width_Height, Graphics canvas){
-            for (int h = hposition; h < Cells; h++)    
+        /*
+         * DrawSameImages is used to loop over the bitmap and Draw the Same Bitmaps.
+         * This increases the speed of Creating the OutputBitmap because it does not need to Resize the Bitmap over and over.
+         */
+        private void DrawSameImages(int Row_position, int Col_position, Image currentImage, Bitmap resizedBitmap, int Width_Height, Graphics canvas)
+        {
+            for (int r = Row_position; r < Cells; r++)      //Loop over the Rows starting at the RowPosition Provided
             {
-                for (int w = wposition; w < Cells; w++)
+                for (int c = Col_position; c < Cells; c++)  //Loop over the Columns starting at the ColPosition Provided.
                 {
-                    if (mosaicImagesDrawn[h, w] == false)
+                    if (mosaicImagesDrawn[r, c] == false)   //If the Cell has not been drawn
                     {
-                        if (currentImage == mosaicImages[h, w])
+                        if (currentImage == mosaicImages[r, c])     //Check if the CurrentImage is the Same as the one at the location.
                         {
-                            //resizedBitmap = ImageEditor.ResizeImageKeepAspectRatio(mosaicImages[h, w].ImageURI, 800 / Cells, 800 / Cells);
-                            //currentImage = mosaicImages[h, w];
-                            mosaicImages[h, w].bitmap = resizedBitmap;
-                            canvas.DrawImage(mosaicImages[h, w].bitmap, new Point(h * Width_Height, w * Width_Height));
-                            mosaicImagesDrawn[h, w] = true;
-                        }                        
+                            mosaicImages[r, c].bitmap = resizedBitmap;      //If it is Set the Bitmap to the resizedBitmap
+                            canvas.DrawImage(mosaicImages[r, c].bitmap, new Point(r * Width_Height, c * Width_Height));     //Draw the Resized Bitmap at the loacation
+                            mosaicImagesDrawn[r, c] = true;         //Set MosaicImagesDrawn to True so we know its been drawn and can skip it.
+                        }
                     }
                 }
             }
         }
-
-
 
         public void ClearScreen()
         {
@@ -260,27 +228,14 @@ namespace PhotoMosaic {
             pictureBox.Image = new Bitmap(b, Size, Size);
         }
 
+        /*
+         * Draw is used to Draw the Bitmap to the PictureBox
+         */
         public void Draw(Bitmap bitmap)
         {
             pictureBox.Image = bitmap;
         }
-
-        /*
-         * ImportSourceImages is used to create an array holding all of the images imported from the folder.
-         */
-        public void ImportSourceImages(string folderPath)
-        {
-            folderPath = sourceFolderFilePath;
-            ArrayList imagesArray = new ArrayList();
-            
-            //string[] array1 = Directory.GetFiles(@"C:\Users\nick.muldrew\Documents\GitHub\PhotoMosaic\Images");
-
-            foreach(string s in Directory.EnumerateFiles(@"..\..\..\Images\", "*.*", SearchOption.AllDirectories))
-            {
-                Console.WriteLine("In Directory: " + s);
-            }
-        }
-
+           
         public void SaveStats()
         {
 
