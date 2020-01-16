@@ -10,8 +10,10 @@ namespace PhotoMosaic {
     class SourceImage : Image{
         public Color[,] AVGColors;       //Color array with average colours.
         public Image[,] mosaicImages;
-        Pen pen = new Pen(Color.Black);
         
+        /*
+         * SourceImage Constructor used to Insistalise Variables.
+         */
         public SourceImage(PictureBox pictureBox, int Cells, string filename) : base(pictureBox, Cells, filename)
         {
             this.pictureBox = pictureBox;
@@ -27,85 +29,38 @@ namespace PhotoMosaic {
             mosaicImages = new Image[Cells, Cells];
         }
 
+
+        /*
+         * CalculateAVGCellColors is used to Split the Image up into Cells and then Calculate the Average Color for Each Cell.
+         */
+        public void CalculateAVGCellColors()
+        {
+            var StopwatchCalculateAvgCellColors = new System.Diagnostics.Stopwatch();   //StopWatch Used to Time this method
+            StopwatchCalculateAvgCellColors.Start();
+            SetWidthHeightCellPixels();     //Set the Width, Height and CellPixels Variable
+
+            for (int w = 0; w < Cells; w++)     //Loop over the Cells
+            {
+                for (int h = 0; h < Cells; h++)
+                {
+                    AVGColors[w, h] = CalculateSection(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);   //Call CalculateSection Setting the Average Color for the Cell
+
+                    //AVGColors[w, h] = CalculateSectionUsingLockBits(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);
+                }
+            }
+
+            StopwatchCalculateAvgCellColors.Stop();
+            Console.WriteLine("Calculating Avg Cell Colors: " + StopwatchCalculateAvgCellColors.ElapsedMilliseconds + " ms");   //Write to Console how long the method took.
+        }
+
+        /*
+         * SetWidthHeightCellPixels is used to Set the Width, Height and CellPixels Variables.
+         */
         private void SetWidthHeightCellPixels()
         {
             Width = bitmap.Width;
             Height = bitmap.Height;
             CellPixels = Width / Cells;
         }
-
-        public void CalculateAVGCellColors()
-        {
-            var StopwatchCalculateAvgCellColors = new System.Diagnostics.Stopwatch();
-            StopwatchCalculateAvgCellColors.Start();
-            SetWidthHeightCellPixels();
-
-            for (int w = 0; w < Cells; w++)
-            {
-                for (int h = 0; h < Cells; h++)
-                {
-                    AVGColors[w, h] = CalculateSection(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);
-
-                    //Console.WriteLine(AVGColors[w, h]);
-                    //AVGColors[w, h] = CalculateSectionUsingLockBits(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);
-
-                }
-            }
-
-            //for (int w = 0; w < Cells; w++)
-            //{
-            //    Parallel.For(0, Cells, h =>
-            //    {
-            //        AVGColors[w, h] = CalculateSection(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);
-            //        //Console.WriteLine(AVGColors[w, h]);
-            //    });
-            //}
-
-
-            StopwatchCalculateAvgCellColors.Stop();
-            Console.WriteLine("Calculating Avg Cell Colors: " + StopwatchCalculateAvgCellColors.ElapsedMilliseconds + " ms");
-        }
-
-        public void DrawAvgColors()
-        {
-            int wid = 0;
-            int hei = 0;
-            Brush brush = new SolidBrush(Color.Black);
-            Bitmap tempBitmap = new Bitmap(800, 800);
-            Graphics Canvas = Graphics.FromImage(tempBitmap);
-
-            for (int w = 0; w < Cells; w++)
-            {
-                wid += 8;
-                hei = 0;
-                for (int h = 0; h < Cells; h++)
-                {                    
-                    brush = new SolidBrush(AVGColors[w, h]);
-                    Canvas.FillRectangle(brush, wid, hei, 8, 8);
-                    //Console.WriteLine(wid + " " + hei);
-                    hei += 8;
-                }                
-            }
-            pictureBox.Image = tempBitmap;
-            Console.WriteLine("drawn");
-        }        
-
-        public void CreateBitmap()
-        {
-            Bitmap flag = new Bitmap(800, 800);
-            Graphics flagGraphics = Graphics.FromImage(flag);
-            int red = 0;
-            int white = 11;
-            while(white <= 100)
-            {
-                flagGraphics.FillRectangle(Brushes.Red, 0, red, 200, 10);
-                flagGraphics.FillRectangle(Brushes.Wheat, 0, white, 200, 10);
-                red += 20;
-                white += 20;
-            }
-            pictureBox.Image = flag;
-        }
-
-        
     }
 }

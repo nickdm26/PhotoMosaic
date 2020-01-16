@@ -9,24 +9,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PhotoMosaic {
+
+    /*
+     * ImageEditor is a Static class used to perform Operations on Bitmaps
+     */
     static class ImageEditor {
-        //PictureBox pictureBox;
-        //Bitmap importedImage;
-        //Bitmap editedImage;
-        //string filepath;
-
-        //public ImageEditor(PictureBox pictureBox)
-        //{
-        //    this.pictureBox = pictureBox;
-        //    importedImage = new Bitmap(800, 800);
-        //}
-
-        //public void ImportImage(string filepath)
-        //{
-        //    this.filepath = filepath;
-        //    Console.WriteLine(filepath);
-        //    importedImage = new Bitmap(filepath);
-        //}
 
         /*
          * Imports the image then Crops it using the ResizeImageKeepAspectRatio method.
@@ -77,14 +64,7 @@ namespace PhotoMosaic {
                 Console.WriteLine("ERROR: The folder to save to could not be created/found: {0}", e.ToString());
             }
         }
-
-
-        //public void Draw()
-        //{
-        //    //pictureBox.Image = ResizeImage(importedImage, 800, 800);
-        //    pictureBox.Image = ResizeImageKeepAspectRatio(importedImage, 800, 800);
-        //}
-
+        
         /*
          * ResizeImageKeepAspectRatio is used to Resize the Bitmap while keeping the aspect ratio
          * width & Height are the desired dimensions that you want the bitmap to be returned as.
@@ -164,6 +144,11 @@ namespace PhotoMosaic {
             return result;
         }
 
+        /*
+         * ResizeImageKeepAspectRatio is used to Resize the Bitmap while keeping the aspect ratio
+         * width & Height are the desired dimensions that you want the bitmap to be returned as.
+         * Can be passed a filepath and it will Create a Bitmap from that instead.
+         */
         public static Bitmap ResizeImageKeepAspectRatio(string path, int width, int height)
         {
             Bitmap result = null;

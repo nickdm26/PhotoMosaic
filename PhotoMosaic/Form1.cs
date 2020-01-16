@@ -115,17 +115,17 @@ namespace PhotoMosaic {
         {
             //Clear();
             //ImageController imgController = new ImageController(pictureBox1);
-            //imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\Test\");
-            Image te = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic.png", 64);
-            Image test = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic.png", 64);
-            Image te2 = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic2.png", 64);
-            Image test2 = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic2.png", 64);
+            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\Test\");
+            //Image te = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic.png", 64);
+            //Image test = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic.png", 64);
+            //Image te2 = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic2.png", 64);
+            //Image test2 = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic2.png", 64);
 
-            Console.WriteLine("Normal: " + te.CalculateSection(0, 0, 800, 800));
-            Console.WriteLine("Lockbits: " + test.CalculateSectionUsingLockBits(0, 0, 800,800));
+            //Console.WriteLine("Normal: " + te.CalculateSection(0, 0, 800, 800));
+            //Console.WriteLine("Lockbits: " + test.CalculateSectionUsingLockBits(0, 0, 800,800));
 
-            Console.WriteLine("Normal 2: " + te2.CalculateSection(0, 0, 800, 800));
-            Console.WriteLine("Lockbits 2: " + test2.CalculateSectionUsingLockBits(0, 0, 800, 800));
+            //Console.WriteLine("Normal 2: " + te2.CalculateSection(0, 0, 800, 800));
+            //Console.WriteLine("Lockbits 2: " + test2.CalculateSectionUsingLockBits(0, 0, 800, 800));
         }
 
         public void Clear()
