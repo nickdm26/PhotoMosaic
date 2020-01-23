@@ -36,8 +36,11 @@ namespace PhotoMosaic
          * Creates the Output Image.
          * Draws the Image to the Screen.
          */
-        public void GenerateMosaic(string InputImageFileName, string SourceImagesDirectory)
+        public void GenerateMosaic(string InputImageFileName, string SourceImagesDirectory, int Cells, int Size)
         {
+            this.Cells = Cells;
+            this.Size = Size;
+
             var stopwatch = new System.Diagnostics.Stopwatch();         //StopWatch to Calculate Overall time
             var stopwatchDraw = new System.Diagnostics.Stopwatch();
 

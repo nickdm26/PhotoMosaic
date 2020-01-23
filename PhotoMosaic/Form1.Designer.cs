@@ -27,7 +27,6 @@
         private void InitializeComponent()
         {
             this.button1 = new System.Windows.Forms.Button();
-            this.numericUpDownCells = new System.Windows.Forms.NumericUpDown();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button2 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -39,8 +38,13 @@
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCells)).BeginInit();
+            this.label1 = new System.Windows.Forms.Label();
+            this.numericUpDownCells = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownSize = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCells)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSize)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -53,33 +57,6 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // numericUpDownCells
-            // 
-            this.numericUpDownCells.Increment = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-            this.numericUpDownCells.Location = new System.Drawing.Point(1242, 102);
-            this.numericUpDownCells.Maximum = new decimal(new int[] {
-            512,
-            0,
-            0,
-            0});
-            this.numericUpDownCells.Minimum = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-            this.numericUpDownCells.Name = "numericUpDownCells";
-            this.numericUpDownCells.Size = new System.Drawing.Size(64, 20);
-            this.numericUpDownCells.TabIndex = 2;
-            this.numericUpDownCells.Value = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
@@ -87,7 +64,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(1240, 144);
+            this.button2.Location = new System.Drawing.Point(1252, 253);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(128, 34);
             this.button2.TabIndex = 3;
@@ -105,7 +82,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(1242, 184);
+            this.button3.Location = new System.Drawing.Point(1254, 293);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(126, 40);
             this.button3.TabIndex = 5;
@@ -119,7 +96,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(1242, 272);
+            this.button4.Location = new System.Drawing.Point(1254, 381);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(126, 23);
             this.button4.TabIndex = 6;
@@ -129,7 +106,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(1242, 301);
+            this.button5.Location = new System.Drawing.Point(1254, 410);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(126, 23);
             this.button5.TabIndex = 7;
@@ -139,7 +116,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(1242, 330);
+            this.button6.Location = new System.Drawing.Point(1254, 439);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(126, 23);
             this.button6.TabIndex = 8;
@@ -149,7 +126,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(1242, 243);
+            this.button7.Location = new System.Drawing.Point(1254, 352);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(126, 23);
             this.button7.TabIndex = 9;
@@ -167,11 +144,76 @@
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(1243, 119);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 13);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Cells";
+            // 
+            // numericUpDownCells
+            // 
+            this.numericUpDownCells.Location = new System.Drawing.Point(1278, 117);
+            this.numericUpDownCells.Name = "numericUpDownCells";
+            this.numericUpDownCells.ReadOnly = true;
+            this.numericUpDownCells.Size = new System.Drawing.Size(65, 20);
+            this.numericUpDownCells.TabIndex = 13;
+            this.numericUpDownCells.Value = new decimal(new int[] {
+            64,
+            0,
+            0,
+            0});
+            this.numericUpDownCells.ValueChanged += new System.EventHandler(this.NumericUpDownCells_ValueChanged);
+            // 
+            // numericUpDownSize
+            // 
+            this.numericUpDownSize.Increment = new decimal(new int[] {
+            256,
+            0,
+            0,
+            0});
+            this.numericUpDownSize.Location = new System.Drawing.Point(1278, 143);
+            this.numericUpDownSize.Maximum = new decimal(new int[] {
+            8192,
+            0,
+            0,
+            0});
+            this.numericUpDownSize.Minimum = new decimal(new int[] {
+            256,
+            0,
+            0,
+            0});
+            this.numericUpDownSize.Name = "numericUpDownSize";
+            this.numericUpDownSize.ReadOnly = true;
+            this.numericUpDownSize.Size = new System.Drawing.Size(65, 20);
+            this.numericUpDownSize.TabIndex = 14;
+            this.numericUpDownSize.Value = new decimal(new int[] {
+            256,
+            0,
+            0,
+            0});
+            this.numericUpDownSize.ValueChanged += new System.EventHandler(this.NumericUpDownSize_ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(1245, 145);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(27, 13);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "Size";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1401, 881);
+            this.ClientSize = new System.Drawing.Size(1643, 881);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.numericUpDownSize);
+            this.Controls.Add(this.numericUpDownCells);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonSave);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.button6);
@@ -180,20 +222,20 @@
             this.Controls.Add(this.button3);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.numericUpDownCells);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCells)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCells)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSize)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.NumericUpDown numericUpDownCells;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.PictureBox pictureBox1;
@@ -205,6 +247,10 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown numericUpDownCells;
+        private System.Windows.Forms.NumericUpDown numericUpDownSize;
+        private System.Windows.Forms.Label label2;
     }
 }
 

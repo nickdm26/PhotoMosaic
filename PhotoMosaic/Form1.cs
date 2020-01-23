@@ -16,6 +16,7 @@ namespace PhotoMosaic {
         string InputImage;
         string SourceImagesFolder;
         ImageController imgController;
+        int CellOldValue;
 
         public Form1()
         {
@@ -29,13 +30,17 @@ namespace PhotoMosaic {
 
         private void Form1_Load(object sender, EventArgs e)
         {   
-            CellsValue = (int)numericUpDownCells.Value;
             imgController = new ImageController(pictureBox1);
+            numericUpDownCells.Maximum = 256;
+            numericUpDownCells.Minimum = 16;
+
+            CellOldValue = (int) numericUpDownCells.Value;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            CellsValue = (int)numericUpDownCells.Value;
+            //CellsValue = (int)trackBar1.Value;
+            Console.WriteLine(CellsValue);
 
             //SourceImage img = new SourceImage(pictureBox1, CellsValue, sourceImage);        //calculates the average cell colours then draws it.
             //img.CalculateAVGCellColors();            
@@ -46,7 +51,7 @@ namespace PhotoMosaic {
             //Image nwImage = new Image(pictureBox1, CellsValue, ImgEdit.saveFileName);
 
             //ImageController imgController = new ImageController(pictureBox1);
-            imgController.GenerateMosaic(InputImage, SourceImagesFolder);
+            imgController.GenerateMosaic(InputImage, SourceImagesFolder, (int)numericUpDownCells.Value, (int) numericUpDownSize.Value);
         }
 
         /*
@@ -102,20 +107,20 @@ namespace PhotoMosaic {
         private void ButtonSlow_Click(object sender, EventArgs e)
         {
             //ImageController imgController = new ImageController(pictureBox1);
-            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images");
+            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images", (int)numericUpDownCells.Value, (int)numericUpDownSize.Value);
         }
 
         private void ButtonFast_Click(object sender, EventArgs e)
         {
             //ImageController imgController = new ImageController(pictureBox1);
-            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\n02085620-Chihuahua\");
+            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\n02085620-Chihuahua\", (int)numericUpDownCells.Value, (int)numericUpDownSize.Value);
         }
 
         private void ButtonSuperFast_Click(object sender, EventArgs e)
         {
             //Clear();
             //ImageController imgController = new ImageController(pictureBox1);
-            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\Test\");
+            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Images\Test\", (int)numericUpDownCells.Value, (int)numericUpDownSize.Value);
             //Image te = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic.png", 64);
             //Image test = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic.png", 64);
             //Image te2 = new Image(@"C:\Users\User\Documents\PhotoMosaic\Images\TestPic2.png", 64);
@@ -139,7 +144,7 @@ namespace PhotoMosaic {
         {
             Clear();
             ImageController imgController = new ImageController(pictureBox1);
-            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Dogs\");
+            imgController.GenerateMosaic(@"C:\Users\User\Documents\PhotoMosaic\Images\test_dog.png", @"C:\Users\User\Documents\PhotoMosaic\Dogs\", (int) numericUpDownCells.Value, (int)numericUpDownSize.Value);
         }
 
         private void ButtonSave_Click(object sender, EventArgs e)
@@ -155,6 +160,28 @@ namespace PhotoMosaic {
                 imgController.Save(savefiledialog.FileName);
                 Console.WriteLine(Path.GetFullPath(savefiledialog.FileName));
             }
+        }
+
+        private void NumericUpDownCells_ValueChanged(object sender, EventArgs e)
+        {
+            int newValue = (int) numericUpDownCells.Value;
+
+            if (CellOldValue > newValue)
+            {
+                newValue = CellOldValue / 2;
+                numericUpDownCells.Value = newValue;
+            }else if(CellOldValue < newValue)
+            {
+                newValue = CellOldValue * 2;
+                numericUpDownCells.Value = newValue;
+            }
+
+            CellOldValue = newValue;
+        }
+
+        private void NumericUpDownSize_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
