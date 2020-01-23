@@ -31,8 +31,6 @@ namespace PhotoMosaic {
         private void Form1_Load(object sender, EventArgs e)
         {   
             imgController = new ImageController(pictureBox1);
-            numericUpDownCells.Maximum = 256;
-            numericUpDownCells.Minimum = 16;
 
             CellOldValue = (int) numericUpDownCells.Value;
         }

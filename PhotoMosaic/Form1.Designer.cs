@@ -156,6 +156,16 @@
             // numericUpDownCells
             // 
             this.numericUpDownCells.Location = new System.Drawing.Point(1278, 117);
+            this.numericUpDownCells.Maximum = new decimal(new int[] {
+            512,
+            0,
+            0,
+            0});
+            this.numericUpDownCells.Minimum = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
             this.numericUpDownCells.Name = "numericUpDownCells";
             this.numericUpDownCells.ReadOnly = true;
             this.numericUpDownCells.Size = new System.Drawing.Size(65, 20);

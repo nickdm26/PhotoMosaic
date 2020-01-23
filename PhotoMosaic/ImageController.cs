@@ -83,10 +83,10 @@ namespace PhotoMosaic
             stopwatch.Stop();
             Console.WriteLine("Finding Closest Images Execution Time: " + stopwatchFindClosestImage.ElapsedMilliseconds + " ms");       //Prints to Console some Times that methods took to run.
             Console.WriteLine("Drawing Image: " + stopwatchDraw.ElapsedMilliseconds + " ms");
-            Console.WriteLine("Total Execution Time: " + stopwatch.ElapsedMilliseconds / 1000 + " seconds");
+            Console.WriteLine("Total Execution Time: " + stopwatch.ElapsedMilliseconds + " ms");
             ClearMemory();
         }
-
+        
         /*
          * ClearMemory is used to Forcefully call the garbage Collector.
          */

@@ -18,7 +18,8 @@ namespace PhotoMosaic {
         public int Width;
         public int Height;
         public int Cells;
-        public int CellPixels;  
+        public int CellPixels;
+        Bitmap clone;
 
         /*
          * Image Constructor
@@ -29,6 +30,7 @@ namespace PhotoMosaic {
             this.pictureBox = pictureBox;
             ImageURI = filename;
             bitmap = new Bitmap(ImageURI);
+            clone = bitmap.Clone(new Rectangle(0, 0, bitmap.Width, bitmap.Height), PixelFormat.Format24bppRgb);
             Width = bitmap.Width;
             Height = bitmap.Height;
             this.Cells = Cells;
@@ -43,6 +45,7 @@ namespace PhotoMosaic {
         {
             ImageURI = filename;
             bitmap = new Bitmap(ImageURI);
+            clone = bitmap.Clone(new Rectangle(0, 0, bitmap.Width, bitmap.Height), PixelFormat.Format24bppRgb);
             Width = bitmap.Width;
             Height = bitmap.Height;
             this.Cells = Cells;
@@ -60,6 +63,11 @@ namespace PhotoMosaic {
         public void ClearImageBitmap()
         {
             bitmap.Dispose();
+            if(clone != null)
+            {
+                clone.Dispose();
+            }
+            
         }
 
         /*
@@ -67,8 +75,9 @@ namespace PhotoMosaic {
          * Returns the Color.
          */
         private Color CalculateAverageColor()
-        {          
-            return CalculateSection(0, 0, Width, Height);   //Calls CalculateSection Passing it the Dimensions of the image.
+        {
+         //   Test();
+            return CalculateSectionUsingLockBits(0, 0, Width, Height);   //Calls CalculateSection Passing it the Dimensions of the image.
         }
 
         /*
@@ -90,6 +99,11 @@ namespace PhotoMosaic {
             return CalculatedBrightness;
         }
 
+        public void Test()
+        {
+            clone = bitmap.Clone(new Rectangle(0, 0, bitmap.Width, bitmap.Height), PixelFormat.Format24bppRgb);
+        }
+        
         /*
          * CalculateSection is used to break a image into a section and Return the averageColor.
          * Can be used on the Entire image or just part of it.
@@ -118,14 +132,12 @@ namespace PhotoMosaic {
 
 
         /*
-         * CalculateSectionUsingLockBits was meant to be an more efficent alternative to CalculateSection.
-         * It does not work Correctly at the moment.
-         * 
-         * Need to make the PixelFormatSize Specfic.
-         * This is making the inner for loop act werid.
+         * CalculateSectionUsingLockBits is about 30times faster than CalculateSection.
+         * Can be used on the Entire image or just part of it.
          */
         public Color CalculateSectionUsingLockBits(int Start_x, int Start_y, int End_x, int End_y)
         {
+
             float red = 0;
             float green = 0;
             float blue = 0;
@@ -137,14 +149,18 @@ namespace PhotoMosaic {
                 //Lock The bitmap into system memory
                 //PixelFormat can be "Format24bppRGB", "Format32bppArgb", etc
                 BitmapData bitmapData = 
-                    bitmap.LockBits(new Rectangle(0,0, bitmap.Width, bitmap.Height),
-                    System.Drawing.Imaging.ImageLockMode.ReadWrite, bitmap.PixelFormat);
+                    clone.LockBits(new Rectangle(0,0, clone.Width, clone.Height),
+                    System.Drawing.Imaging.ImageLockMode.ReadWrite, clone.PixelFormat);
+
+                //Console.WriteLine(clone.PixelFormat)
+
 
                 //Define variables for bytes per pixel, as well as Image Width & Height
-                int bytesPerPixel = System.Drawing.Bitmap.GetPixelFormatSize(bitmap.PixelFormat) / 8;
+                int bytesPerPixel = System.Drawing.Bitmap.GetPixelFormatSize(clone.PixelFormat) / 8;
                 int heightInPixels = bitmapData.Height;
                 int widthInBytes = bitmapData.Width * bytesPerPixel;
-                int end = (End_y * bytesPerPixel);
+                int end = (End_x * bytesPerPixel);
+                int start = (Start_x * bytesPerPixel);
 
                 //Define a pointer to the first pixel in the locked image
                 //Scan0 gets or sets the address of the first pixel data in the bitmap.
@@ -154,12 +170,12 @@ namespace PhotoMosaic {
                 //Step thru each pixel in the image using pointers
                 //Parallel.For executres a 'for' loop in which iterations 
                 
-                for (int w = Start_x; w < End_x; w++)
+                for (int w = Start_y; w < End_y; w++)
                 {
                     //use the 'Stride' (scanline width) property to step line by line thru the image
                     byte* currentLine = PtrFirstPixel + (w * bitmapData.Stride);
                     
-                    for (int h = Start_y; h < end; h = h + bytesPerPixel)
+                    for (int h = start; h < end; h = h + bytesPerPixel)
                     {
                         blue += currentLine[h];
                         green += currentLine[h + 1];
@@ -167,30 +183,14 @@ namespace PhotoMosaic {
                         counter++;
                     }
                 }
-
-                bitmap.UnlockBits(bitmapData);
+                
+                clone.UnlockBits(bitmapData);
             }
 
             red = red / pixelAmount;
             green = green / pixelAmount;
             blue = blue / pixelAmount;
-
-            //Testing stuff
-            if(red > 255)
-            {
-                Console.WriteLine("red: " + red);
-                red = 255;
-            }
-            if(green > 255)
-            {
-                Console.WriteLine("green: " + green);
-                green = 255;
-            }
-            if(blue > 255)
-            {
-                Console.WriteLine("blue: " + blue);
-                blue = 255;
-            }
+            
             Color answer = Color.FromArgb((int) red, (int) green, (int) blue);
             return answer;
         }

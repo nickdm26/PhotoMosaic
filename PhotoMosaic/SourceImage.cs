@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace PhotoMosaic {
     class SourceImage : Image{
-        public Color[,] AVGColors;       //Color array with average colours.
+        public Color[,] AVGColors;       //Color array with average colours
         public Image[,] mosaicImages;
         
         /*
@@ -35,22 +35,21 @@ namespace PhotoMosaic {
          */
         public void CalculateAVGCellColors()
         {
-            var StopwatchCalculateAvgCellColors = new System.Diagnostics.Stopwatch();   //StopWatch Used to Time this method
-            StopwatchCalculateAvgCellColors.Start();
-            SetWidthHeightCellPixels();     //Set the Width, Height and CellPixels Variable
+            //var StopwatchCalculateAvgCellColors = new System.Diagnostics.Stopwatch();   //StopWatch Used to Time this method
+            //StopwatchCalculateAvgCellColors.Start();
+            SetWidthHeightCellPixels();     //Set the Width, Height and CellPixels 
+            Test();
 
             for (int w = 0; w < Cells; w++)     //Loop over the Cells
             {
                 for (int h = 0; h < Cells; h++)
                 {
-                    AVGColors[w, h] = CalculateSection(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);   //Call CalculateSection Setting the Average Color for the Cell
-
-                    //AVGColors[w, h] = CalculateSectionUsingLockBits(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);
+                    AVGColors[w, h] = CalculateSectionUsingLockBits(w * CellPixels, h * CellPixels, (w * CellPixels) + CellPixels, (h * CellPixels) + CellPixels);
                 }
             }
 
-            StopwatchCalculateAvgCellColors.Stop();
-            Console.WriteLine("Calculating Avg Cell Colors: " + StopwatchCalculateAvgCellColors.ElapsedMilliseconds + " ms");   //Write to Console how long the method took.
+            //StopwatchCalculateAvgCellColors.Stop();
+            //Console.WriteLine("Calculating Avg Cell Colors: " + StopwatchCalculateAvgCellColors.ElapsedMilliseconds + " ms");   //Write to Console how long the method took.
         }
 
         /*
